@@ -3,7 +3,7 @@ import cv2
 import math
 
 # cap = cv2.VideoCapture('tenor.gif')
-cap = cv2.VideoCapture('untitled.mp4')
+cap = cv2.VideoCapture('best_video.mp4')
 # Define the codec and create VideoWriter object
 
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
@@ -24,19 +24,13 @@ first = True
 
 cv2.namedWindow('Image', cv2.WINDOW_NORMAL)
 cv2.namedWindow('Image2', cv2.WINDOW_NORMAL)
-cv2.resizeWindow('Image', 600, 600)
-cv2.resizeWindow('Image2', 600, 600)
+cv2.resizeWindow('Image', 720, 480)
+cv2.resizeWindow('Image2', 720, 480)
 
 pontos = []
-frameNum = 0
 
 while cap.isOpened():
     ret, frame = cap.read()
-
-    # Pula alguns frames pois demora para comecar
-    frameNum = frameNum + 1
-    if frameNum < 250:
-        continue
 
     if first:
         frameCaminho = frame
@@ -46,12 +40,12 @@ while cap.isOpened():
 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         # cv2.equalizeHist( gray, gray );  
-        circlesize = 21
+        circlesize = 4
         elipse = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (circlesize, circlesize))
-        thresh = cv2.morphologyEx(gray, cv2.MORPH_CLOSE, elipse)
+        # thresh = cv2.morphologyEx(gray, cv2.MORPH_CLOSE, elipse)
         gray = cv2.GaussianBlur(gray, (5, 5), 0)
         # cv2.imshow("Gaussian Blur", gray)
-        thresh = cv2.threshold(gray, 180, 255, cv2.THRESH_BINARY)[1] 
+        thresh = cv2.threshold(gray, 200, 255, cv2.THRESH_BINARY)[1]
         thresh = cv2.erode(thresh, elipse, iterations=1)
         thresh = cv2.dilate(thresh, elipse, iterations=1)
         # thresh = cv2.bitwise_not(thresh) 
@@ -86,8 +80,8 @@ while cap.isOpened():
                         menorDistancia = novaDistancia
                         pontoMaisPerto = pt
                 # Evita desenhar riscos absurdos
-                if menorDistancia < 400:
-                    cv2.line(frameCaminho, (cX, cY), (pontoMaisPerto[0], pontoMaisPerto[1]), (255, 255, 255), 5)
+                if menorDistancia < 200:
+                    cv2.line(frameCaminho, (cX, cY), (pontoMaisPerto[0], pontoMaisPerto[1]), (255, 255, 255), 2)
 
             # show the image
         cv2.imshow("Image", frame)
